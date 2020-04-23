@@ -2,15 +2,9 @@ package handler;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.PrintStream;
 
 public class ScreenHandler extends AbstractHandler implements Runnable {
-    private boolean isStopped = false;
-
-    public ScreenHandler(PrintStream ps) {
-        System.setOut(ps);
-        System.setErr(ps);
-    }
+    int multiplier = 5;
 
     @Override
     public void run() {
@@ -18,22 +12,22 @@ public class ScreenHandler extends AbstractHandler implements Runnable {
     }
 
     public void startScreenshotting()  {
-        while (!isStopped) {
-            System.out.println("Running...");
+        int time = 0;
+        while (true) {
+            System.out.println(String.format("Running %d sec", time++ * multiplier));
             if (ImageHandler.getInstance().checkSubImage(takeScreenshot())) {
                 MouseHandler.getInstance().acceptGame();
                 System.out.println("Game accepted");
                 break;
             } else {
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(1000 * multiplier);
                 } catch (InterruptedException e) {
-                    System.out.println("Some problems happened... Trying to continue working");
+                    System.out.println("Stopped");
+                    break;
                 }
             }
         }
-
-        isStopped = false;
     }
 
     /**
@@ -43,10 +37,5 @@ public class ScreenHandler extends AbstractHandler implements Runnable {
      */
     public BufferedImage takeScreenshot() {
         return robot.createScreenCapture(new Rectangle(screenSize));
-    }
-
-    public void setStopped() {
-        isStopped = true;
-        System.out.println("Stopped");
     }
 }

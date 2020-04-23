@@ -1,21 +1,18 @@
 package screen;
 
-import handler.ScreenHandler;
+import service.EventService;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
-import java.io.OutputStream;
-import java.io.PrintStream;
+import javafx.stage.WindowEvent;
 
 public class MainScreen extends Application {
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         showMainScreen();
     }
 
@@ -34,15 +31,10 @@ public class MainScreen extends Application {
         textArea.setPrefWidth(400);
         textArea.setPrefHeight(200);
 
-        PrintStream ps = new PrintStream(new Console(textArea));
-        ScreenHandler screenHandler = new ScreenHandler(ps);
+        EventService.changeStdOutTo(textArea);
 
-        Thread thread = new Thread(screenHandler);
-        thread.setDaemon(true);
-
-        acceptButton.setOnMouseClicked(event -> thread.start());
-
-        stopButton.setOnMouseClicked(event -> screenHandler.setStopped());
+        acceptButton.setOnMouseClicked(event -> EventService.setupAcceptEventHandler());
+        stopButton.setOnMouseClicked(event -> EventService.setupStopEventHandler());
 
         root.getChildren().addAll(acceptButton, stopButton, textArea);
         root.setPadding(new Insets(20));
@@ -52,18 +44,8 @@ public class MainScreen extends Application {
         stage.setTitle("Dota Accepter");
         stage.setScene(scene);
         stage.show();
-    }
 
-    private static class Console extends OutputStream {
-        private TextArea console;
-
-        public Console(TextArea console) {
-            this.console = console;
-        }
-
-        @Override
-        public void write(int b) {
-            Platform.runLater(() -> console.appendText(String.valueOf((char) b)));
-        }
+        stage.getScene().getWindow().addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST,
+                event -> EventService.setupShutdownEventHandler());
     }
 }

@@ -1,39 +1,39 @@
 package handler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.PrintStream;
 
-public class ScreenHandler extends AbstractHandler {
-    protected static Logger logger = LoggerFactory.getLogger(ScreenHandler.class);
-    private static final ScreenHandler instance = new ScreenHandler();
+public class ScreenHandler extends AbstractHandler implements Runnable {
+    private boolean isStopped = false;
 
-    public static ScreenHandler getInstance() {
-        return instance;
+    public ScreenHandler(PrintStream ps) {
+        System.setOut(ps);
+        System.setErr(ps);
     }
 
-
-    private boolean active;
-
-    public ScreenHandler() {
-
+    @Override
+    public void run() {
+        startScreenshotting();
     }
 
     public void startScreenshotting()  {
-        active = true;
-        while (active) {
+        while (!isStopped) {
+            System.out.println("Running...");
             if (ImageHandler.getInstance().checkSubImage(takeScreenshot())) {
-                active = !MouseHandler.getInstance().acceptGame();
+                MouseHandler.getInstance().acceptGame();
+                System.out.println("Game accepted");
+                break;
             } else {
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    System.out.println("Some problems happened... Trying to continue working");
                 }
             }
         }
+
+        isStopped = false;
     }
 
     /**
@@ -45,11 +45,8 @@ public class ScreenHandler extends AbstractHandler {
         return robot.createScreenCapture(new Rectangle(screenSize));
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setStopped() {
+        isStopped = true;
+        System.out.println("Stopped");
     }
 }

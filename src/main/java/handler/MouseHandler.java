@@ -14,20 +14,14 @@ public class MouseHandler extends AbstractHandler {
 
     }
 
-    public boolean acceptGame() {
-        try {
-            Point location = MouseInfo.getPointerInfo().getLocation();
-            int xPrev = ((int) location.getX());
-            int yPrev = (int) location.getY();
-            robot.delay(1000);
-            robot.mouseMove(screenSize.width / 2, screenSize.height / 2);
-            robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-            robot.mouseMove(xPrev, yPrev);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+    public void acceptGame() {
+        Point location = MouseInfo.getPointerInfo().getLocation();
+        int xPrev = ((int) location.getX());
+        int yPrev = (int) location.getY();
+        robot.delay(1000);
+        robot.mouseMove(screenSize.width / 2, screenSize.height / 2);
+        robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+        robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+        robot.mouseMove(xPrev, yPrev);
     }
 }

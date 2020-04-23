@@ -1,8 +1,6 @@
 package handler;
 
 import constant.ColorValueList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -11,7 +9,6 @@ import java.awt.image.Raster;
 import java.util.ArrayList;
 
 public class ImageHandler extends AbstractHandler {
-    protected static Logger logger = LoggerFactory.getLogger(ImageHandler.class);
     private static final ImageHandler instance = new ImageHandler();
 
     public static ImageHandler getInstance() {

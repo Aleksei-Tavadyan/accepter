@@ -2,6 +2,7 @@ package handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -23,8 +24,11 @@ public class ScreenHandler extends AbstractHandler {
     public void startScreenshotting() throws InterruptedException {
         active = true;
         while (active) {
-            new ImageHandler().getSubImage(takeScreenshot());
-            Thread.sleep(5000);
+            if (ImageHandler.getInstance().checkSubImage(takeScreenshot())) {
+                active = !MouseHandler.getInstance().acceptGame();
+            } else {
+                Thread.sleep(5000);
+            }
         }
     }
 

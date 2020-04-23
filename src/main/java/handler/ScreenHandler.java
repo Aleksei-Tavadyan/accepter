@@ -21,13 +21,17 @@ public class ScreenHandler extends AbstractHandler {
 
     }
 
-    public void startScreenshotting() throws InterruptedException {
+    public void startScreenshotting()  {
         active = true;
         while (active) {
             if (ImageHandler.getInstance().checkSubImage(takeScreenshot())) {
                 active = !MouseHandler.getInstance().acceptGame();
             } else {
-                Thread.sleep(5000);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

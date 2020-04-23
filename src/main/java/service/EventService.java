@@ -9,22 +9,26 @@ import java.io.PrintStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EventService {
     private static ExecutorService executorService = Executors.newFixedThreadPool(1);
     private static Future<?> runningTask = null;
+    private static AtomicBoolean running = new AtomicBoolean(false);
 
     public static void setupAcceptEventHandler() {
-        if (runningTask == null) {
-            runningTask = executorService.submit(new ScreenHandler());
+        if (!running.get()) {
+            running.getAndSet(true);
+            runningTask = executorService.submit(new ScreenHandler(running));
         } else {
             System.out.println("The application is already running");
         }
     }
 
     public static void setupStopEventHandler() {
-        runningTask.cancel(true);
-        runningTask = null;
+        if (running.get()) {
+            runningTask.cancel(true);
+        }
     }
 
     public static void setupShutdownEventHandler() {

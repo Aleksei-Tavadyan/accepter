@@ -32,6 +32,7 @@ public class ConnectionWorker implements Runnable {
 
         byte[] buffer = new byte[1024 * 4];
 
+        //asdassadsa
         while(true) {
             try{
                 int count = inputStream.read(buffer, 0, buffer.length);
